@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommendation - PFDSS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f9fbf9; color: #333; min-height: 100vh; }
+        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 18px 40px; background: linear-gradient(135deg, #0d3b25 0%, #1a5c3a 100%); box-shadow: 0 4px 12px rgba(0,0,0,0.15); color: white; }
+        .logo { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.6rem; }
+        .logo-icon { font-size: 2.2rem; color: #a5d6a7; }
+        .nav-links a { color: #e8f5e9; text-decoration: none; margin-left: 20px; font-weight: 500; padding: 8px 16px; border-radius: 6px; background: rgba(255,255,255,0.15); transition: 0.2s; }
+        .nav-links a:hover { background: rgba(255,255,255,0.25); }
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .card { background: white; border-radius: 10px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .recommendation { padding: 20px; border-radius: 10px; font-size: 18px; text-align: center; font-weight: bold; margin: 15px 0; line-height: 1.5; }
+        .fertigate { background: #e8f5e9; border-left: 5px solid #4caf50; }
+        .no-fertigate { background: #f1f8e9; border-left: 5px solid #8bc34a; }
+        .npk-card { background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); border: 2px solid #ffc107; border-radius: 10px; padding: 20px; margin-top: 20px; }
+        .fertilizer-box { background: white; padding: 15px; border-radius: 8px; text-align: center; margin: 10px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .fertilizer-amount { font-size: 28px; font-weight: bold; margin: 10px 0; }
+        .urea { color: #e65100; } .dap { color: #1976d2; } .mop { color: #7b1fa2; }
+        .page-nav { display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .page-nav a { padding: 10px 20px; background: #e8f5e9; color: #2e7d32; text-decoration: none; border-radius: 6px; font-weight: 500; transition: all 0.2s; }
+        .page-nav a.active, .page-nav a:hover { background: #4caf50; color: white; }
+        .btn { background: #4caf50; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; cursor: pointer; margin: 10px 5px; transition: background 0.2s; }
+        .btn:hover { background: #388e3c; }
+        .btn:disabled { background: #b0bec5; cursor: not-allowed; }
+        .error { background: #ffebee; color: #c62828; padding: 12px; border-radius: 6px; margin: 10px 0; display: none; border-left: 4px solid #f44336; }
+        .loading { text-align: center; padding: 20px; color: #666; }
+        @media (max-width: 768px) {
+            .main-header { flex-direction: column; padding: 15px; text-align: center; }
+            .nav-links { margin-top: 10px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+            .nav-links a { margin: 0; }
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo"><img style="width: 50px;" src="./WhatsApp_Image_2026-04-09_at_12.30.40_PM__1_-removebg-preview.png" alt="" srcset=""><span>PFDSS</span></div>
+       
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="login.html">Login</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2 style="color: #2e7d32; margin-bottom: 15px;">💡 Stack Ensemble Recommendation (Layer 4)</h2>
+            <div id="recommendation-output"><div class="loading">🔄 Loading recommendation...</div></div>
+            <div id="error-message" class="error"></div>
+            
+            <div id="npk-breakdown" class="npk-card" style="display:none;">
+                <h3 style="margin-top:0; color:#f57f17; text-align:center;">🧪 Fertilizer Product Requirements</h3>
+                <div id="npk-status-message"></div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+                    <div class="fertilizer-box">
+                        <div style="font-size:14px;color:#666;">Urea (46-0-0)</div>
+                        <div class="fertilizer-amount urea"><span id="urea-rate">0</span> <small>kg/ha</small></div>
+                        <div style="font-size:12px;color:#999;">Provides: <span id="n-from-urea">0</span> kg N</div>
+                    </div>
+                    <div class="fertilizer-box">
+                        <div style="font-size:14px;color:#666;">DAP (18-46-0)</div>
+                        <div class="fertilizer-amount dap"><span id="dap-rate">0</span> <small>kg/ha</small></div>
+                        <div style="font-size:12px;color:#999;">Provides: <span id="p-from-dap">0</span> kg P₂O₅</div>
+                    </div>
+                    <div class="fertilizer-box">
+                        <div style="font-size:14px;color:#666;">MOP (0-0-60)</div>
+                        <div class="fertilizer-amount mop"><span id="mop-rate">0</span> <small>kg/ha</small></div>
+                        <div style="font-size:12px;color:#999;">Provides: <span id="k-from-mop">0</span> kg K₂O</div>
+                    </div>
+                </div>
+                <div style="margin-top:15px;padding:12px;background:white;border-radius:6px;text-align:center;">
+                    <strong>Total Nutrients:</strong><br>
+                    <span style="color:#e65100;"><span id="total-npk">0</span> kg N</span> + 
+                    <span style="color:#1976d2;"><span id="total-p2o5">0</span> kg P₂O₅</span> + 
+                    <span style="color:#7b1fa2;"><span id="total-k2o">0</span> kg K₂O</span><br>
+                    <small style="color:#666;">per hectare</small>
+                </div>
+                <div id="deficiency-details" style="margin-top:15px;"></div>
+            </div>
+            
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="btn" id="refreshBtn" onclick="fetchRecommendation()">🔄 Refresh</button>
+                <button class="btn" onclick="window.location.href='expert-view.html'">➡️ Expert View</button>
+            </div>
+        </div>
+
+        <div class="page-nav">
+            <a href="data-acquisition.html">1. Data Input</a>
+            <a href="recommendation.html" class="active">2. Recommendation</a>
+            <a href="expert-view.html">3. Expert View</a>
+            <a href="logs.html">4. Logs</a>
+            <a href="actions.html">5. Actions</a>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 🌐 CONFIG: ONLINE BACKEND URL
+        // ==========================================
+        const API_BASE = 'https://precisionfertigation-3.onrender.com';
+        const API_URL = `${API_BASE}/predict`;
+        // ==========================================
+
+        // ✅ Load saved input data (support both keys for backward compatibility)
+        function getFormData() {
+            try {
+                // Try primary key first
+                const primary = localStorage.getItem('formData');
+                if (primary) return JSON.parse(primary);
+                
+                // Fallback to legacy key
+                const legacy = localStorage.getItem('pfdss_input_data');
+                if (legacy) return JSON.parse(legacy);
+            } catch (e) {
+                console.warn('⚠️ Could not parse stored form data:', e);
+            }
+            return {};
+        }
+        
+        const formData = getFormData();
+        console.log('📦 Loaded formData:', Object.keys(formData));
+
+        async function fetchRecommendation() {
+            const output = document.getElementById('recommendation-output');
+            const errorMsg = document.getElementById('error-message');
+            const npkBreakdown = document.getElementById('npk-breakdown');
+            const refreshBtn = document.getElementById('refreshBtn');
+            
+            // UI states
+            output.innerHTML = '<div class="loading">🔄 Analyzing with AI...</div>';
+            errorMsg.style.display = 'none';
+            npkBreakdown.style.display = 'none';
+            refreshBtn.disabled = true;
+            refreshBtn.textContent = 'Loading...';
+            
+            // Validate input
+            if (Object.keys(formData).length === 0) {
+                output.innerHTML = '<p><em>⚠️ No data found. <a href="data-acquisition.html" style="color:#4caf50;">Enter data first</a>.</em></p>';
+                refreshBtn.disabled = false;
+                refreshBtn.textContent = '🔄 Refresh';
+                return;
+            }
+            
+            try {
+                console.log('🌐 POST to:', API_URL);
+                console.log('📦 Payload:', JSON.stringify(formData, null, 2));
+                
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(formData),
+                    // 30s timeout for Render free tier spin-up
+                    signal: AbortSignal.timeout ? AbortSignal.timeout(30000) : undefined
+                });
+                
+                if (!response.ok) {
+                    const errText = await response.text().catch(() => 'Unknown error');
+                    console.error('❌ Server error:', response.status, errText);
+                    throw new Error(`API ${response.status}: ${errText.substring(0, 150)}`);
+                }
+                
+                const result = await response.json();
+                console.log('✅ API Response:', JSON.stringify(result, null, 2));
+                
+                // Display main recommendation
+                const needLabel = result.need_label;
+                const ratePred = result.rate_pred;
+                const needProba = result.need_proba;
+                
+                if (needLabel === 1) {
+                    output.innerHTML = `
+                        <div class="recommendation fertigate">
+                            ✅ <strong>FERTIGATION RECOMMENDED</strong><br>
+                            Rate: ${ratePred != null ? ratePred.toFixed(1) : 'N/A'} kg/ha<br>
+                            Timing: Apply within 48–72 hours<br>
+                            Confidence: ${needProba != null ? (needProba * 100).toFixed(0) : 'N/A'}%
+                        </div>`;
+                } else {
+                    output.innerHTML = `
+                        <div class="recommendation no-fertigate">
+                            🌱 <strong>No fertigation needed</strong> at this time.<br>
+                            <small style="color:#666;">Continue monitoring soil conditions.</small>
+                        </div>`;
+                }
+                
+                // Display NPK breakdown if available
+                if (result.fertilizer_breakdown) {
+                    displayNPKBreakdown(result.fertilizer_breakdown);
+                    npkBreakdown.style.display = 'block';
+                }
+                
+                // ✅ Save prediction to history for logs page
+                try {
+                    const history = JSON.parse(localStorage.getItem('pfdss_history') || '[]');
+                    history.unshift({ 
+                        ...formData, 
+                        ...result, 
+                        timestamp: new Date().toISOString() 
+                    });
+                    localStorage.setItem('pfdss_history', JSON.stringify(history.slice(0, 10)));
+                    console.log('💾 Saved to prediction history');
+                } catch (e) {
+                    console.warn('⚠️ Could not save to history:', e);
+                }
+                
+            } catch (err) {
+                console.error('❌ Fetch error:', err);
+                
+                let msg = 'Failed to connect to prediction service.';
+                if (err.message?.includes('timeout')) {
+                    msg = '⏱ Request timed out. Service may be starting up. Try again in 30 seconds.';
+                } else if (err.message?.includes('Failed to fetch')) {
+                    msg = '🔌 Cannot connect to server. Check your internet connection.';
+                } else if (err.message?.includes('CORS')) {
+                    msg = '🚫 CORS error. Contact support if this persists.';
+                } else {
+                    msg = `⚠️ ${err.message?.substring(0, 100) || 'Unknown error'}`;
+                }
+                
+                errorMsg.textContent = msg;
+                errorMsg.style.display = 'block';
+                output.innerHTML = '<p><em>⚠️ Could not load recommendation.</em></p>';
+                
+            } finally {
+                refreshBtn.disabled = false;
+                refreshBtn.textContent = '🔄 Refresh';
+            }
+        }
+        
+        function displayNPKBreakdown(breakdown) {
+            const d = breakdown.deficiency_details || {};
+            
+            // Safe number formatting
+            const fmt = (val, decimals = 1) => {
+                if (val == null || isNaN(val)) return '0';
+                return parseFloat(val).toFixed(decimals);
+            };
+            
+            document.getElementById('urea-rate').textContent = fmt(breakdown.urea_kg_ha);
+            document.getElementById('dap-rate').textContent = fmt(breakdown.dap_kg_ha);
+            document.getElementById('mop-rate').textContent = fmt(breakdown.mop_kg_ha);
+            
+            // Calculate nutrient contributions
+            const nFromUrea = breakdown.urea_kg_ha ? (breakdown.urea_kg_ha * 0.46) : 0;
+            const pFromDap = breakdown.dap_kg_ha ? (breakdown.dap_kg_ha * 0.46) : 0;
+            const kFromMop = breakdown.mop_kg_ha ? (breakdown.mop_kg_ha * 0.60) : 0;
+            
+            document.getElementById('n-from-urea').textContent = fmt(nFromUrea);
+            document.getElementById('p-from-dap').textContent = fmt(pFromDap);
+            document.getElementById('k-from-mop').textContent = fmt(kFromMop);
+            
+            document.getElementById('total-npk').textContent = fmt(breakdown.total_n_kg_ha);
+            document.getElementById('total-p2o5').textContent = fmt(breakdown.total_p2o5_kg_ha);
+            document.getElementById('total-k2o').textContent = fmt(breakdown.total_k2o_kg_ha);
+            
+            // Status message with color coding
+            let status = '';
+            if (breakdown.has_excess) {
+                status = `<div style="background:#ffebee;border:2px solid #f44336;padding:15px;border-radius:8px;margin-bottom:15px;text-align:center;">
+                    <h3 style="color:#c62828;margin:0 0 10px 0;">⛔ NO FERTIGATION NEEDED</h3>
+                    <p style="margin:0;color:#666;"><strong>Soil nutrients are already EXCESSIVE!</strong><br>
+                    <small>Reduce fertilizer application to avoid nutrient runoff.</small></p></div>`;
+            } else if (breakdown.needs_fertigation) {
+                status = `<div style="background:#fff3e0;border:2px solid #ff9800;padding:15px;border-radius:8px;margin-bottom:15px;text-align:center;">
+                    <h3 style="color:#ef6c00;margin:0 0 10px 0;">✅ FERTIGATION RECOMMENDED</h3>
+                    <p style="margin:0;color:#666;"><strong>Apply the fertilizers below:</strong><br>
+                    <small>Split application: 60% at planting, 40% at 4-6 weeks.</small></p></div>`;
+            } else {
+                status = `<div style="background:#e8f5e9;border:2px solid #4caf50;padding:15px;border-radius:8px;margin-bottom:15px;text-align:center;">
+                    <h3 style="color:#2e7d32;margin:0;">✓ NUTRIENT LEVELS OPTIMAL</h3>
+                    <p style="margin:5px 0 0 0;color:#666;"><small>Continue current management practices.</small></p></div>`;
+            }
+            document.getElementById('npk-status-message').innerHTML = status;
+            
+            // Deficiency details table
+            const colors = { DEFICIENT: '#c62828', EXCESS: '#ef6c00', OPTIMAL: '#2e7d32' };
+            const nutrientNames = {N:'Nitrogen (N)', P:'Phosphorus (P)', K:'Potassium (K)'};
+            
+            let html = '<div style="margin-top:15px;"><strong>Nutrient Status:</strong><ul style="margin:10px 0; padding-left:20px; list-style:none;">';
+            ['N', 'P', 'K'].forEach(nut => {
+                const status = d.status?.[nut] || 'OPTIMAL';
+                const deficit = d[`${nut.toLowerCase()}_deficit_kg_ha`] || 0;
+                const excess = d[`${nut.toLowerCase()}_excess_kg_ha`] || 0;
+                const name = nutrientNames[nut];
+                let extra = '';
+                if (deficit > 0) extra = `<small style="color:#c62828;">(${fmt(deficit)} kg/ha deficit)</small>`;
+                else if (excess > 0) extra = `<small style="color:#ef6c00;">(${fmt(excess)} kg/ha excess)</small>`;
+                html += `<li style="margin:8px 0;"><strong>${name}:</strong> 
+                         <span style="color:${colors[status]};font-weight:bold;">${status}</span> ${extra}</li>`;
+            });
+            html += '</ul></div>';
+            document.getElementById('deficiency-details').innerHTML = html;
+        }
+        
+        // ✅ Auto-fetch when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🔄 Recommendation page loaded');
+            if (Object.keys(formData).length > 0) {
+                fetchRecommendation();
+            } else {
+                document.getElementById('recommendation-output').innerHTML = 
+                    '<p><em>⚠️ No input data found. Please <a href="data-acquisition.html" style="color:#4caf50;">enter data first</a>.</em></p>';
+            }
+        });
+        
+        // Allow keyboard shortcut: Ctrl+R or Cmd+R to refresh
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+                e.preventDefault();
+                fetchRecommendation();
+            }
+        });
+    </script>
+</body>
+</html>

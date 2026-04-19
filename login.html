@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Login - Precision Fertigation DSS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f9fbf9;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header - Matches your existing theme */
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 40px;
+            background: linear-gradient(135deg, #0d3b25 0%, #1a5c3a 100%);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            color: white;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.6rem;
+        }
+
+        .logo-icon {
+            font-size: 2.2rem;
+            color: #a5d6a7;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: #e8f5e9;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            padding: 8px 16px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .nav-links a.register {
+            background: rgba(76, 175, 80, 0.3);
+        }
+
+        .nav-links a.register:hover {
+            background: rgba(76, 175, 80, 0.5);
+        }
+
+        /* Main Container */
+        .container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* Login Card */
+        .auth-card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            border-top: 4px solid #4caf50;
+        }
+
+        .auth-card h2 {
+            color: #2e7d32;
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        .auth-card p.subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #444;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #4caf50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        input::placeholder {
+            color: #aaa;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0;
+        }
+
+        .toggle-password:hover {
+            color: #4caf50;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #555;
+        }
+
+        .remember-me input {
+            width: auto;
+            margin: 0;
+        }
+
+        .forgot-password {
+            color: #1976d2;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        button {
+            width: 100%;
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #388e3c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        button:disabled {
+            background: #a5d6a7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #ddd;
+        }
+
+        .divider span {
+            padding: 0 15px;
+        }
+
+        /* Social Login (Optional) */
+        .social-login {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .social-btn:hover {
+            border-color: #4caf50;
+            background: #f9fbf9;
+        }
+
+        .social-btn.google { color: #db4437; }
+        .social-btn.microsoft { color: #00a4ef; }
+
+        /* Links & Messages */
+        .auth-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .auth-link a {
+            color: #1976d2;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-link a:hover {
+            text-decoration: underline;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+            text-align: center;
+        }
+
+        .message.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+            display: block;
+        }
+
+        .message.error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+            display: block;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 15px;
+            color: #777;
+            font-size: 0.85rem;
+            background: #f1f8f1;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .auth-card {
+                padding: 25px;
+            }
+            .main-header {
+                padding: 15px 20px;
+            }
+            .logo-text {
+                font-size: 1.3rem;
+            }
+            .form-options {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="logo">
+            <div class="logo-icon">🌱</div>
+            <div class="logo-text">PFDSS</div>
+        </div>
+        <div class="nav-links">
+            <a href="register.html" class="register">Register</a>
+            <a href="index.html">Home</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="auth-card">
+            <h2>Welcome Back</h2>
+            <p class="subtitle">Sign in to your Precision Fertigation account</p>
+            
+            <div id="form-message" class="message"></div>
+            
+            <form id="loginForm" novalidate>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required minlength="6">
+                        <button type="button" class="toggle-password" onclick="togglePassword()">👁️</button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="remember" name="remember">
+                        Remember me
+                    </label>
+                    <a href="#" class="forgot-password" onclick="showForgotPassword()">Forgot password?</a>
+                </div>
+
+                <button type="submit" id="submitBtn">Sign In</button>
+            </form>
+
+            <!-- Optional: Social Login -->
+  
+
+            <p class="auth-link">Don't have an account? <a href="register.html">Create one</a></p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2026 Precision Fertigation Decision Support System. All rights reserved.
+    </footer>
+
+    <script>
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleBtn = document.querySelector('.toggle-password');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleBtn.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleBtn.textContent = '👁️';
+            }
+        }
+
+        // Show forgot password modal (placeholder)
+        function showForgotPassword() {
+            alert('Password reset functionality will be implemented soon.\n\nFor now, please contact your administrator.');
+        }
+
+        // Social login placeholder
+        function socialLogin(provider) {
+            showMessage(`Connecting to ${provider.charAt(0).toUpperCase() + provider.slice(1)}...`, 'info');
+            // TODO: Implement OAuth flow
+        }
+
+        // Form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const messageDiv = document.getElementById('form-message');
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            // Basic validation
+            if (!email || !password) {
+                showMessage('Please enter both email and password.', 'error');
+                return;
+            }
+
+            // Email format validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showMessage('Please enter a valid email address.', 'error');
+                return;
+            }
+
+            // Password length validation
+            if (password.length < 6) {
+                showMessage('Password must be at least 6 characters.', 'error');
+                return;
+            }
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Signing in...';
+            messageDiv.className = 'message';
+            messageDiv.style.display = 'none';
+
+            // Prepare payload
+            const payload = {
+                email: email,
+                password: password,
+                remember: document.getElementById('remember').checked
+            };
+
+            try {
+                // TODO: Replace with your actual login API endpoint
+                // const response = await fetch('http://localhost:5000/login', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify(payload)
+                // });
+
+                // Simulate API delay for demo
+                await new Promise(resolve => setTimeout(resolve, 1200));
+                
+                // Success simulation (for demo purposes)
+                if (email === 'demo@pfdss.com' && password === 'demo123') {
+                    showMessage('Login successful! Redirecting...', 'success');
+                    
+                    // Save auth token (demo)
+                    localStorage.setItem('pfdss_user', JSON.stringify({
+                        email: email,
+                        name: 'Demo User',
+                        token: 'demo_token_12345'
+                    }));
+                    
+                    // Redirect to main app after 1.5 seconds
+                    setTimeout(() => {
+                        window.location.href = 'data-acquisition.html';
+                    }, 1500);
+                } else {
+                    // Simulate invalid credentials
+                    throw new Error('Invalid email or password');
+                }
+
+            } catch (error) {
+                showMessage('Login failed. Please check your credentials.', 'error');
+                console.error('Login error:', error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign In';
+            }
+        });
+
+        function showMessage(text, type) {
+            const msgDiv = document.getElementById('form-message');
+            msgDiv.textContent = text;
+            msgDiv.className = `message ${type}`;
+            msgDiv.style.display = 'block';
+            
+            // Auto-hide success messages after 3 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    msgDiv.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // Check if user is already logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedUser = localStorage.getItem('pfdss_user');
+            if (savedUser) {
+                // Optional: Auto-redirect or show welcome message
+                console.log('Welcome back!', JSON.parse(savedUser));
+            }
+        });
+    </script>
+</body>
+</html>

@@ -17,17 +17,21 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            color: white;
         }
 
         /* Header */
         header {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            padding: 20px 40px;
+            padding: 15px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
@@ -39,8 +43,45 @@
             font-weight: 700;
         }
 
-        .logo-icon {
-            font-size: 2rem;
+        .logo-icon img {
+            width: 50px;
+            height: auto;
+        }
+
+        /* Language Selector */
+        .lang-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .lang-selector label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .lang-selector select {
+            padding: 8px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .lang-selector select:hover,
+        .lang-selector select:focus {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.6);
+            outline: none;
+        }
+
+        .lang-selector select option {
+            background: #1a5c3a;
+            color: white;
         }
 
         /* Hero Section */
@@ -52,7 +93,6 @@
             align-items: center;
             text-align: center;
             padding: 60px 20px;
-            color: white;
             position: relative;
             overflow: hidden;
         }
@@ -183,6 +223,61 @@
             line-height: 1.5;
         }
 
+        /* Pricing Section */
+        .pricing-section {
+            padding: 60px 40px;
+            background: rgba(255, 255, 255, 0.03);
+            text-align: center;
+        }
+
+        .pricing-section h2 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: #a5d6a7;
+        }
+
+        .price-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .price-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .price-item:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .price-item strong {
+            display: block;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .price-val {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #81c784;
+        }
+
+        .price-note {
+            margin-top: 20px;
+            font-size: 0.85rem;
+            opacity: 0.8;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
         /* Footer */
         footer {
             background: rgba(0, 0, 0, 0.2);
@@ -190,10 +285,17 @@
             text-align: center;
             padding: 20px;
             font-size: 0.9rem;
+            margin-top: auto;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px 20px;
+            }
+
             .hero h1 {
                 font-size: 2.2rem;
             }
@@ -212,12 +314,16 @@
                 max-width: 280px;
             }
 
-            header {
-                padding: 15px 20px;
-            }
-
             .logo {
                 font-size: 1.2rem;
+            }
+
+            .pricing-section {
+                padding: 40px 20px;
+            }
+
+            .price-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -233,41 +339,54 @@
             }
         }
 
-        .hero-content > * {
+        .hero-content > *,
+        .feature-card,
+        .price-item {
             animation: fadeInUp 0.8s ease-out;
         }
 
-        .hero-content h1 {
-            animation-delay: 0.1s;
-        }
-
-        .hero-content p {
-            animation-delay: 0.2s;
-        }
-
-        .auth-buttons {
-            animation-delay: 0.3s;
-        }
+        .hero-content h1 { animation-delay: 0.1s; }
+        .hero-content p { animation-delay: 0.2s; }
+        .auth-buttons { animation-delay: 0.3s; }
+        .feature-card:nth-child(2) { animation-delay: 0.4s; }
+        .feature-card:nth-child(3) { animation-delay: 0.5s; }
+        .feature-card:nth-child(4) { animation-delay: 0.6s; }
+        .price-item { animation-delay: 0.7s; }
     </style>
 </head>
 <body>
     <!-- Header -->
     <header>
         <div class="logo">
-        <a href="./data-acquisition.html">   <div class="logo-icon"><img style="width: 50px;" src="./WhatsApp_Image_2026-04-09_at_12.30.40_PM__1_-removebg-preview.png" alt="" srcset=""></div></a> 
-            <span>PFDSS</span>
+            <a href="./data-acquisition.html">
+                <div class="logo-icon">
+                    <img src="./WhatsApp_Image_2026-04-09_at_12.30.40_PM__1_-removebg-preview.png" alt="PFDSS Logo">
+                </div>
+            </a>
+            <span data-i18n="appTitle">PFDSS</span>
+        </div>
+        
+        <!-- Language Selector -->
+        <div class="lang-selector">
+            <label for="langSelector" data-i18n="language">Language:</label>
+            <select id="langSelector">
+                <option value="en">English</option>
+                <option value="yo">Yorùbá</option>
+                <option value="ha">Hausa</option>
+                <option value="ig">Igbo</option>
+            </select>
         </div>
     </header>
 
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <h1>Precision <span>Fertigation</span> Decision Support System</h1>
-            <p>Optimize your crop nutrition with AI-powered recommendations. Make data-driven decisions for efficient water and nutrient management to maximize yield while minimizing environmental impact.</p>
+            <h1 data-i18n="heroTitle">Precision <span>Fertigation</span> Decision Support System</h1>
+            <p data-i18n="heroSubtitle">Optimize crop nutrition with AI‑driven insights. Get data‑based recommendations for water and fertilizer so you can boost yields, cut waste, and reduce environmental harm.</p>
             
             <div class="auth-buttons">
-                <a href="register.html" class="btn btn-primary">Register</a>
-                <a href="login.html" class="btn btn-secondary">Login</a>
+                <a href="register.html" class="btn btn-primary" data-i18n="registerBtn">Register</a>
+                <a href="login.html" class="btn btn-secondary" data-i18n="loginBtn">Login</a>
             </div>
         </div>
     </section>
@@ -276,29 +395,251 @@
     <section class="features">
         <div class="feature-card">
             <div class="feature-icon">🤖</div>
-            <h3>AI-Powered Analysis</h3>
-            <p>Advanced machine learning algorithms analyze soil, weather, and crop data for precise recommendations.</p>
+            <h3 data-i18n="featureAI">AI-Powered Analysis</h3>
+            <p data-i18n="featureAIDesc">Advanced machine learning algorithms analyze soil, weather, and crop data for precise recommendations.</p>
         </div>
         <div class="feature-card">
             <div class="feature-icon">💧</div>
-            <h3>Smart Irrigation</h3>
-            <p>Optimize water usage with intelligent scheduling based on real-time field conditions.</p>
+            <h3 data-i18n="featureIrrigation">Smart Irrigation</h3>
+            <p data-i18n="featureIrrigationDesc">Optimize water usage with intelligent scheduling based on real-time field conditions.</p>
         </div>
         <div class="feature-card">
             <div class="feature-icon">📊</div>
-            <h3>Data-Driven Insights</h3>
-            <p>Comprehensive analytics and historical trends to support informed decision-making.</p>
+            <h3 data-i18n="featureInsights">Data-Driven Insights</h3>
+            <p data-i18n="featureInsightsDesc">Comprehensive analytics and historical trends to support informed decision-making.</p>
         </div>
         <div class="feature-card">
             <div class="feature-icon">🌾</div>
-            <h3>Maximize Yield</h3>
-            <p>Increase crop productivity while reducing input costs and environmental footprint.</p>
+            <h3 data-i18n="featureYield">Maximize Yield</h3>
+            <p data-i18n="featureYieldDesc">Increase crop productivity while reducing input costs and environmental footprint.</p>
         </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section">
+        <h2 data-i18n="pricingTitle">Fertilizer Prices (Nigeria)</h2>
+        <div class="price-grid" id="priceGrid"></div>
+        <p class="price-note" data-i18n="lastUpdated">Updated: April 2026</p>
     </section>
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2026 Precision Fertigation Decision Support System. All rights reserved.</p>
+        <p>&copy; 2026 <span data-i18n="footerText">Precision Fertigation Decision Support System. All rights reserved.</span></p>
     </footer>
+
+    <script>
+        // Internationalization (i18n) Data
+        const i18n = {
+            en: {
+                appTitle: "PFDSS",
+                language: "Language:",
+                heroTitle: "Precision <span>Fertigation</span> Decision Support System",
+                heroSubtitle: "Optimize crop nutrition with AI‑driven insights. Get data‑based recommendations for water and fertilizer so you can boost yields, cut waste, and reduce environmental harm.",
+                registerBtn: "Register",
+                loginBtn: "Login",
+                featureAI: "AI-Powered Analysis",
+                featureAIDesc: "Advanced machine learning algorithms analyze soil, weather, and crop data for precise recommendations.",
+                featureIrrigation: "Smart Irrigation",
+                featureIrrigationDesc: "Optimize water usage with intelligent scheduling based on real-time field conditions.",
+                featureInsights: "Data-Driven Insights",
+                featureInsightsDesc: "Comprehensive analytics and historical trends to support informed decision-making.",
+                featureYield: "Maximize Yield",
+                featureYieldDesc: "Increase crop productivity while reducing input costs and environmental footprint.",
+                pricingTitle: "Fertilizer Prices (Nigeria)",
+                lastUpdated: "Updated: April 2026",
+                footerText: "Precision Fertigation Decision Support System. All rights reserved.",
+                prices: {
+                    Urea: "Urea (46% N)",
+                    DAP: "DAP (18-46-0)",
+                    MOP: "MOP (60% K₂O)",
+                    NPK: "NPK 15:15:15"
+                }
+            },
+            yo: {
+                appTitle: "PFDSS",
+                language: "Èdè:",
+                heroTitle: "Ètò Ìrànlọ́wọ́ Ìpinnu <span>Fertigation</span> Tó Ṣe Déédé",
+                heroSubtitle: "Ṣe àtúnṣe ìmúra ohun ọ̀gbìn pẹ̀lú ìmọ̀-ẹ̀rọ AI. Gba àwọn ìtọ́nisọ́nà tí ó dá lórí data fún omi àti oògùn ilẹ̀ láti lè mú iṣẹ́-ọ̀gbìn rẹ̀ dára, dínkù ìfọwọ́sowọ́pọ̀, àti dínkù ipa lórí ayé.",
+                registerBtn: "Forúkọsílẹ̀",
+                loginBtn: "Wọlé",
+                featureAI: "Ìṣirò AI",
+                featureAIDesc: "Àwọn algorithm machine learning tó lagbaye ń ṣe àtúnyẹ̀wò data ilẹ̀, ojú-ọjọ́, àti ohun ọ̀gbìn fún àwọn ìtọ́nisọ́nà tó ṣe déédé.",
+                featureIrrigation: "Ìfún Omi Ọlọ́gbọ́n",
+                featureIrrigationDesc: "Ṣe àtúnṣe lílo omi pẹ̀lú ìètò ọlọ́gbọ́n tí ó dá lórí àwọn ipò pápá gangan.",
+                featureInsights: "Ìmọ̀-ọ̀rọ̀ Tí Ó Dá Lórí Data",
+                featureInsightsDesc: "Àwọn analytics àti àwọn ìtẹ̀síwájú ìtàn láti ṣe àtìlẹ́yìn fún ìpinnu tí ó ní ìmọ̀.",
+                featureYield: "Mú Iṣẹ́-ọ̀gbìn Pọ̀",
+                featureYieldDesc: "Mú iṣẹ́-ọ̀gbìn pọ̀ sí i nígbà tí o ń dín àwọn owó ìnáwó àti ipa lórí ayé kù.",
+                pricingTitle: "Iye Oògùn Ilẹ̀ (Nàíjíríà)",
+                lastUpdated: "Ọjọ́: April 2026",
+                footerText: "Ètò Ìrànlọ́wọ́ Ìpinnu Fertigation Tó Ṣe Déédé. Gbogbo ẹ̀tọ́ ni a pamọ́.",
+                prices: {
+                    Urea: "Urea (46% N)",
+                    DAP: "DAP (18-46-0)",
+                    MOP: "MOP (60% K₂O)",
+                    NPK: "NPK 15:15:15"
+                }
+            },
+            ha: {
+                appTitle: "PFDSS",
+                language: "Yaren:",
+                heroTitle: "Tsarin Taimakawa Yanke <span>Fertigation</span> Daidai",
+                heroSubtitle: "Haɓaka abinci da shuke-shuke tare da hangen nesa na AI. Samu shawarwari masu dogaro da bayanai don ruwa da takin ƙasa don haɓaka amfanin gona, rage ɓarna, da rage lahani ga muhalli.",
+                registerBtn: "Yi Rajista",
+                loginBtn: "Shiga",
+                featureAI: "Bincike na AI",
+                featureAIDesc: "Algoritm na machine learning masu ƙarfi suna bincika bayanai na ƙasa, yanayi, da amfanin gona don shawarwari masu daidaito.",
+                featureIrrigation: "Ban Ruwa Mai Hikima",
+                featureIrrigationDesc: "Haɓaka amfani da ruwa tare da tsari mai hikima bisa yanayin fili na lokaci guda.",
+                featureInsights: "Hangen Nesa na Bayanai",
+                featureInsightsDesc: "Bincike mai zurfi da kungiyoyin tarihi don tallafawa yanke shawara mai ilimi.",
+                featureYield: "Haɓaka Amfani",
+                featureYieldDesc: "Ƙara samar da amfanin gona yayin rage farashin shigarwa da tasirin muhalli.",
+                pricingTitle: "Farashin Takin Ƙasa (Najeriya)",
+                lastUpdated: "Afrilu 2026",
+                footerText: "Tsarin Taimakawa Yanke Fertigation Da Daidai. Duk haƙƙoƙin da aka keɓe.",
+                prices: {
+                    Urea: "Urea (46% N)",
+                    DAP: "DAP (18-46-0)",
+                    MOP: "MOP (60% K₂O)",
+                    NPK: "NPK 15:15:15"
+                }
+            },
+            ig: {
+                appTitle: "PFDSS",
+                language: "Asụsụ:",
+                heroTitle: "Usoro Nkwado Mkpebi <span>Fertigation</span> Ziri Ezi",
+                heroSubtitle: "Mezigharị nri ihe ọkụkụ site na nghọta AI. Nweta ndụmọdụ dabere na data maka mmiri na fatịlaịza ka i nwee ike ịbawanye mkpụrụ, belata iji efu, ma belata mmerụ gburugburu ebe obibi.",
+                registerBtn: "Deba Aha",
+                loginBtn: "Banye",
+                featureAI: "Nyocha AI",
+                featureAIDesc: "Algorithms machine learning dị elu na-enyocha ala, ihu igwe, na data ihe ọkụkụ maka ndụmọdụ ziri ezi.",
+                featureIrrigation: "Ịgba Mmiri Mara",
+                featureIrrigationDesc: "Mezigharị iji mmiri site na nhazi mara amamihe dabere na ọnọdụ ubi n'oge.",
+                featureInsights: "Nghọta Dabere na Data",
+                featureInsightsDesc: "Nyocha zuru ezu na ndịiche akụkọ iji kwado mkpebi nwere nghọta.",
+                featureYield: "Mee Ka Mkpụrụ Dịkwuo Elu",
+                featureYieldDesc: "Mee ka mmepụta ihe ọkụkụ dịkwuo elu ma na-ebelata ọnụ ahịa ntinye na mmetụta gburugburu ebe obibi.",
+                pricingTitle: "Ọnụego Fatiliza (Naịjirịa)",
+                lastUpdated: "Eprel 2026",
+                footerText: "Usoro Nkwado Mkpebi Fertigation Ziri Ezi. Ikike niile echekwara.",
+                prices: {
+                    Urea: "Urea (46% N)",
+                    DAP: "DAP (18-46-0)",
+                    MOP: "MOP (60% K₂O)",
+                    NPK: "NPK 15:15:15"
+                }
+            }
+        };
+
+        // Fertilizer Prices Data (₦/kg)
+        const fertilizerPrices = {
+            urea: 950,
+            dap: 1120,
+            mop: 870,
+            npk: 930,
+            currency: "₦"
+        };
+
+        // DOM Elements
+        const langSelector = document.getElementById('langSelector');
+        const priceGrid = document.getElementById('priceGrid');
+
+        // Render fertilizer prices
+        function renderPrices(translations) {
+            priceGrid.innerHTML = `
+                <div class="price-item">
+                    <strong>${translations.prices.Urea}</strong>
+                    <div class="price-val">${fertilizerPrices.currency}${fertilizerPrices.urea}/kg</div>
+                </div>
+                <div class="price-item">
+                    <strong>${translations.prices.DAP}</strong>
+                    <div class="price-val">${fertilizerPrices.currency}${fertilizerPrices.dap}/kg</div>
+                </div>
+                <div class="price-item">
+                    <strong>${translations.prices.MOP}</strong>
+                    <div class="price-val">${fertilizerPrices.currency}${fertilizerPrices.mop}/kg</div>
+                </div>
+                <div class="price-item">
+                    <strong>${translations.prices.NPK}</strong>
+                    <div class="price-val">${fertilizerPrices.currency}${fertilizerPrices.npk}/kg</div>
+                </div>
+            `;
+        }
+
+        // Update language throughout the page
+        function updateLanguage(lang) {
+            // Save preference to localStorage
+            localStorage.setItem('pfdssLang', lang);
+            
+            const t = i18n[lang];
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) {
+                    // Handle HTML content for hero title (with span)
+                    if (key === 'heroTitle') {
+                        el.innerHTML = t[key];
+                    } else {
+                        el.textContent = t[key];
+                    }
+                }
+            });
+            
+            // Re-render prices with current language
+            renderPrices(t);
+            
+            // Update HTML lang attribute for accessibility
+            document.documentElement.lang = lang;
+        }
+
+        // Fetch live prices from API (fallback to static if unavailable)
+        async function fetchLivePrices() {
+            try {
+                const response = await fetch('/api/fertilizer-prices');
+                if (!response.ok) throw new Error('Network error');
+                const data = await response.json();
+                
+                // Safely merge live data
+                Object.keys(data).forEach(key => {
+                    if (fertilizerPrices.hasOwnProperty(key)) {
+                        fertilizerPrices[key] = data[key];
+                    }
+                });
+                
+                // Ensure currency is set
+                if (!fertilizerPrices.currency) {
+                    fertilizerPrices.currency = "₦";
+                }
+            } catch (error) {
+                console.warn("Using fallback prices:", error.message);
+            }
+            // Re-render with current language
+            renderPrices(i18n[langSelector.value]);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Restore saved language or default to English
+            const savedLang = localStorage.getItem('pfdssLang') || 'en';
+            langSelector.value = savedLang;
+            updateLanguage(savedLang);
+            
+            // Language change handler
+            langSelector.addEventListener('change', (e) => {
+                updateLanguage(e.target.value);
+            });
+            
+            // Initial price render
+            renderPrices(i18n[savedLang]);
+            
+            // Fetch live prices (with fallback)
+            fetchLivePrices();
+            
+            // Refresh prices every 24 hours
+            setInterval(fetchLivePrices, 24 * 60 * 60 * 1000);
+        });
+    </script>
 </body>
 </html>

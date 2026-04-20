@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logs & History - PFDSS</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f9fbf9; color: #333; min-height: 100vh; }
+        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 18px 40px; background: linear-gradient(135deg, #0d3b25 0%, #1a5c3a 100%); box-shadow: 0 4px 12px rgba(0,0,0,0.15); color: white; }
+        .logo { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.6rem; }
+        .logo-icon { font-size: 2.2rem; color: #a5d6a7; }
+        .nav-links a { color: #e8f5e9; text-decoration: none; margin-left: 20px; font-weight: 500; padding: 8px 16px; border-radius: 6px; background: rgba(255,255,255,0.15); transition: 0.2s; }
+        .nav-links a:hover { background: rgba(255,255,255,0.25); }
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .card { background: white; border-radius: 10px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .chart-container { height: 320px; position: relative; margin: 15px 0; }
+        .log-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+        .log-table th, .log-table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        .log-table th { background: #e8f5e9; font-weight: 600; color: #2e7d32; }
+        .log-table tr:hover { background: #f9f9f9; }
+        .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+        .status-yes { background: #e8f5e9; color: #2e7d32; }
+        .status-no { background: #f5f5f5; color: #666; }
+        .page-nav { display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .page-nav a { padding: 10px 20px; background: #e8f5e9; color: #2e7d32; text-decoration: none; border-radius: 6px; font-weight: 500; transition: all 0.2s; }
+        .page-nav a.active, .page-nav a:hover { background: #4caf50; color: white; }
+        .btn { background: #4caf50; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; cursor: pointer; margin: 10px 5px; transition: background 0.2s; }
+        .btn:hover { background: #388e3c; }
+        .btn-outline { background: transparent; border: 2px solid #4caf50; color: #4caf50; }
+        .btn-outline:hover { background: #e8f5e9; }
+        .empty-state { text-align: center; padding: 40px; color: #666; }
+        .empty-state p { margin: 10px 0; }
+        @media (max-width: 768px) {
+            .main-header { flex-direction: column; padding: 15px; text-align: center; }
+            .nav-links { margin-top: 10px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+            .nav-links a { margin: 0; }
+            .log-table { font-size: 12px; }
+            .log-table th, .log-table td { padding: 8px 6px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+         <div class="logo"><img style="width: 50px;" src="./WhatsApp_Image_2026-04-09_at_12.30.40_PM__1_-removebg-preview.png" alt="" srcset=""><span>PFDSS</span></div>
+      
+        <div class="nav-links"><a href="index.html">Home</a><a href="login.html">Login</a></div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <h2 style="color: #2e7d32;">📊 Decision Summary & Logs (Layer 5)</h2>
+                <button class="btn btn-outline" onclick="clearHistory()">🗑️ Clear History</button>
+            </div>
+            
+            <h3 style="margin: 25px 0 15px 0; color: #2e7d32;">Historical Trend Chart</h3>
+            <div class="chart-container">
+                <canvas id="trendChart"></canvas>
+            </div>
+            
+            <h3 style="margin: 25px 0 15px 0; color: #2e7d32;">Past Predictions Log</h3>
+            <div id="tableContainer">
+                <table class="log-table">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Soil Moisture (%)</th>
+                            <th>N (mg/kg)</th>
+                            <th>Recommendation</th>
+                            <th>Confidence</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logTableBody">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn" onclick="window.location.href='expert-view.html'">⬅️ Back to Expert View</button>
+                <button class="btn" onclick="window.location.href='actions.html'">➡️ Take Action</button>
+            </div>
+        </div>
+
+        <div class="page-nav">
+            <a href="data-acquisition.html">1. Data Input</a>
+            <a href="recommendation.html">2. Recommendation</a>
+            <a href="expert-view.html">3. Expert View</a>
+            <a href="logs.html" class="active">4. Logs</a>
+            <a href="actions.html">5. Actions</a>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 📦 LOAD HISTORY FROM localStorage
+        // ==========================================
+        function getHistory() {
+            try {
+                const stored = localStorage.getItem('pfdss_history');
+                return stored ? JSON.parse(stored) : [];
+            } catch (e) {
+                console.warn('⚠️ Could not parse history:', e);
+                return [];
+            }
+        }
+
+        // Format timestamp to readable date
+        function formatDate(ts) {
+            if (!ts) return 'N/A';
+            const d = new Date(ts);
+            return d.toLocaleDateString('en-NG', { 
+                month: 'short', day: 'numeric', 
+                hour: '2-digit', minute: '2-digit' 
+            });
+        }
+
+        // Format number safely
+        function fmt(val, decimals = 1) {
+            if (val == null || isNaN(val)) return '–';
+            return parseFloat(val).toFixed(decimals);
+        }
+
+        // ==========================================
+        // 📊 CHART.JS SETUP
+        // ==========================================
+        let trendChart = null;
+
+        function initChart(history) {
+            const ctx = document.getElementById('trendChart').getContext('2d');
+            
+            // Prepare data arrays (reverse for chronological order)
+            const reversed = [...history].reverse();
+            
+            const labels = reversed.map(h => {
+                const d = new Date(h.timestamp);
+                return `${d.getDate()}/${d.getMonth()+1}`;
+            });
+            
+            const moistureData = reversed.map(h => h.soil_moisture ?? null);
+            const nData = reversed.map(h => h.npk_n_mgkg ?? null);
+            const rainfallData = reversed.map(h => h.rainfall_forecast_mm ?? null);
+            const rateData = reversed.map(h => h.rate_pred ?? null);
+
+            // Destroy existing chart if any
+            if (trendChart) trendChart.destroy();
+
+            trendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels.length > 0 ? labels : ['No data'],
+                    datasets: [
+                        {
+                            label: 'Soil Moisture (%)',
+                            data: moistureData,
+                            borderColor: '#4CAF50',
+                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            yAxisID: 'y',
+                            fill: false,
+                            tension: 0.3,
+                            pointRadius: 4
+                        },
+                        {
+                            label: 'N (mg/kg)',
+                            data: nData,
+                            borderColor: '#2196F3',
+                            backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                            yAxisID: 'y',
+                            fill: false,
+                            tension: 0.3,
+                            pointRadius: 4
+                        },
+                        {
+                            label: 'Rainfall Forecast (mm)',
+                            data: rainfallData,
+                            borderColor: '#FF9800',
+                            backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                            yAxisID: 'y1',
+                            fill: false,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            borderDash: [5, 5]
+                        },
+                        {
+                            label: 'Recommended Rate (kg/ha)',
+                            data: rateData,
+                            borderColor: '#9C27B0',
+                            backgroundColor: 'rgba(156, 39, 176, 0.1)',
+                            yAxisID: 'y2',
+                            fill: false,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            borderDash: [2, 2]
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: { display: true, text: 'Moisture & N' },
+                            min: 0
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: { display: true, text: 'Rainfall (mm)' },
+                            grid: { drawOnChartArea: false },
+                            min: 0
+                        },
+                        y2: {
+                            type: 'linear',
+                            display: false, // Hidden but used for rate data
+                            min: 0
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Field Conditions & Recommendations Trend'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    if (context.parsed.y !== null) {
+                                        if (label.includes('Rate')) {
+                                            label += context.parsed.y.toFixed(1) + ' kg/ha';
+                                        } else if (label.includes('Rainfall')) {
+                                            label += context.parsed.y.toFixed(1) + ' mm';
+                                        } else {
+                                            label += context.parsed.y.toFixed(1);
+                                        }
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ==========================================
+        // 📋 POPULATE TABLE
+        // ==========================================
+        function populateTable(history) {
+            const tbody = document.getElementById('logTableBody');
+            const container = document.getElementById('tableContainer');
+            
+            if (history.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p style="font-size: 3rem;">📭</p>
+                        <p><strong>No predictions logged yet</strong></p>
+                        <p>Submit data in <a href="data-acquisition.html" style="color:#4caf50;">Data Input</a> to start tracking.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            // Show most recent first
+            [...history].reverse().forEach(h => {
+                const rec = h.need_label === 1 
+                    ? `<span style="color:#2e7d32;font-weight:600;">${fmt(h.rate_pred,1)} kg/ha</span>` 
+                    : '<span style="color:#666;">No fertigation</span>';
+                
+                const badge = h.need_label === 1 
+                    ? '<span class="status-badge status-yes">Recommended</span>' 
+                    : '<span class="status-badge status-no">Not Needed</span>';
+                
+                html += `
+                    <tr>
+                        <td>${formatDate(h.timestamp)}</td>
+                        <td><strong>${fmt(h.soil_moisture)}%</strong></td>
+                        <td>${fmt(h.npk_n_mgkg)}</td>
+                        <td>${rec}<br><small>${badge}</small></td>
+                        <td>${h.need_proba != null ? (h.need_proba*100).toFixed(0)+'%' : '–'}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        // ==========================================
+        // 🗑️ CLEAR HISTORY
+        // ==========================================
+        function clearHistory() {
+            if (confirm('Clear all prediction history? This cannot be undone.')) {
+                localStorage.removeItem('pfdss_history');
+                // Refresh UI
+                const history = getHistory();
+                initChart(history);
+                populateTable(history);
+                alert('✅ History cleared');
+            }
+        }
+
+        // ==========================================
+        // 🚀 INITIALIZE ON LOAD
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📊 Logs page: Loading history...');
+            const history = getHistory();
+            console.log(`📦 Found ${history.length} logged predictions`);
+            
+            initChart(history);
+            populateTable(history);
+        });
+    </script>
+</body>
+</html>

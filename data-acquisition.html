@@ -9,9 +9,34 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f9fbf9; color: #333; min-height: 100vh; }
         .main-header { display: flex; justify-content: space-between; align-items: center; padding: 18px 40px; background: linear-gradient(135deg, #0d3b25 0%, #1a5c3a 100%); box-shadow: 0 4px 12px rgba(0,0,0,0.15); color: white; }
         .logo { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.6rem; }
-        .logo-icon { font-size: 2.2rem; color: #a5d6a7; }
-        .nav-links a { color: #e8f5e9; text-decoration: none; margin-left: 20px; font-weight: 500; padding: 8px 16px; border-radius: 6px; background: rgba(255,255,255,0.15); transition: 0.2s; }
+        .logo img { width: 50px; height: auto; }
+        .nav-links { display: flex; align-items: center; gap: 15px; }
+        .nav-links a { color: #e8f5e9; text-decoration: none; font-weight: 500; padding: 8px 16px; border-radius: 6px; background: rgba(255,255,255,0.15); transition: 0.2s; }
         .nav-links a:hover { background: rgba(255,255,255,0.25); }
+        
+        /* ✅ Auth UI Styles */
+        .auth-info { display: flex; align-items: center; gap: 12px; }
+        .user-email { 
+            font-size: 0.9rem; 
+            color: #c8e6c9; 
+            font-weight: 500;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .btn-logout { 
+            background: rgba(255,255,255,0.2); 
+            color: white; 
+            border: 1px solid rgba(255,255,255,0.4); 
+            padding: 6px 14px; 
+            border-radius: 6px; 
+            font-size: 0.85rem; 
+            cursor: pointer; 
+            transition: 0.2s;
+        }
+        .btn-logout:hover { background: rgba(255,255,255,0.3); }
+        
         .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
         .card { background: white; border-radius: 10px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
@@ -28,20 +53,30 @@
         .status-msg { margin-top: 15px; padding: 10px; border-radius: 6px; text-align: center; font-size: 14px; display: none; }
         .status-msg.success { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; display: block; }
         .status-msg.error { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; display: block; }
+        
         @media (max-width: 768px) {
             .main-header { flex-direction: column; padding: 15px; text-align: center; }
-            .nav-links { margin-top: 10px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+            .nav-links { margin-top: 10px; flex-wrap: wrap; justify-content: center; gap: 8px; }
             .nav-links a { margin: 0; }
+            .auth-info { flex-direction: column; gap: 8px; }
             .grid { grid-template-columns: 1fr; }
+            .user-email { max-width: 100%; }
         }
     </style>
 </head>
 <body>
     <header class="main-header">
-        <div class="logo"><img style="width: 50px;" src="./WhatsApp_Image_2026-04-09_at_12.30.40_PM__1_-removebg-preview.png" alt="" srcset=""><span>PFDSS</span></div>
+        <div class="logo">
+            <img src="./WhatsApp_Image_2026-04-09_at_12.30.40_PM__1_-removebg-preview.png" alt="PFDSS Logo">
+            <span>PFDSS</span>
+        </div>
+        
+        <!-- ✅ DYNAMIC AUTH SECTION -->
         <div class="nav-links">
             <a href="index.html">Home</a>
-            <a href="login.html">Login</a>
+            <div id="authSection">
+                <!-- Content injected by JavaScript -->
+            </div>
         </div>
     </header>
 
@@ -117,27 +152,55 @@
 
     <script>
         // ==========================================
-        // CRITICAL: Feature names MUST match app.py MODEL_FEATURE_ORDER exactly
+        // 🔐 AUTH UTILITIES (Shared across all pages)
+        // ==========================================
+        function getUser() {
+            try {
+                const userStr = localStorage.getItem('pfdss_user');
+                return userStr ? JSON.parse(userStr) : null;
+            } catch { return null; }
+        }
+
+        function isLoggedIn() {
+            return !!localStorage.getItem('pfdss_token') && !!getUser();
+        }
+
+        function logout() {
+            localStorage.removeItem('pfdss_token');
+            localStorage.removeItem('pfdss_user');
+            window.location.href = 'index.html';
+        }
+
+        function updateAuthUI() {
+            const authSection = document.getElementById('authSection');
+            if (!authSection) return;
+
+            if (isLoggedIn()) {
+                const user = getUser();
+                const email = user?.email || 'user@example.com';
+                authSection.innerHTML = `
+                    <div class="auth-info">
+                        <span class="user-email" title="${email}">👤 ${email}</span>
+                        <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+                    </div>
+                `;
+            } else {
+                authSection.innerHTML = `<a href="login.html">Login</a>`;
+            }
+        }
+
+        // ==========================================
+        // 📦 FORM DATA HANDLING
         // ==========================================
         const FEATURE_KEYS = [
-            'soil_moisture',
-            'nutrient_ec_dS_m', 
-            'npk_n_mgkg',
-            'npk_p_mgkg',
-            'npk_k_mgkg',
-            'soil_temp_c',
-            'soil_ph',
-            'air_temp_c',
-            'humidity_pct',
-            'rainfall_forecast_mm',
-            'crop_age_days',
-            'plant_vi_proxy'
+            'soil_moisture', 'nutrient_ec_dS_m', 'npk_n_mgkg', 'npk_p_mgkg',
+            'npk_k_mgkg', 'soil_temp_c', 'soil_ph', 'air_temp_c',
+            'humidity_pct', 'rainfall_forecast_mm', 'crop_age_days', 'plant_vi_proxy'
         ];
 
-        // localStorage keys used across all pages
         const STORAGE_KEYS = {
-            formData: 'formData',              // Used by recommendation.html & expert-view.html
-            lastResult: 'lastPredictionResult' // Cached API response
+            formData: 'formData',
+            lastResult: 'lastPredictionResult'
         };
 
         function showStatus(msg, isSuccess) {
@@ -156,12 +219,11 @@
                     const val = parseFloat(el.value);
                     data[key] = isNaN(val) ? 0 : val;
                 } else {
-                    console.warn(`⚠️ Missing input element: ${key}`);
+                    console.warn(`⚠️ Missing input: ${key}`);
                     data[key] = 0;
                 }
             }
-            // Add metadata
-            data.crop_type = 'tomato'; // Default; can be extended with dropdown later
+            data.crop_type = 'tomato';
             data.timestamp = new Date().toISOString();
             return data;
         }
@@ -173,65 +235,53 @@
 
             try {
                 const formData = collectFormData();
-                console.log('✅ Collected form data:', formData);
+                console.log('✅ Collected:', formData);
 
-                // Validate required fields
-                const missing = FEATURE_KEYS.filter(k => formData[k] === undefined || formData[k] === null);
-                if (missing.length > 0) {
-                    throw new Error(`Missing fields: ${missing.join(', ')}`);
-                }
+                const missing = FEATURE_KEYS.filter(k => formData[k] == null);
+                if (missing.length > 0) throw new Error(`Missing: ${missing.join(', ')}`);
 
-                // Save to localStorage with EXACT key expected by other pages
                 localStorage.setItem(STORAGE_KEYS.formData, JSON.stringify(formData));
-                console.log(`✅ Saved to localStorage[${STORAGE_KEYS.formData}]`);
-
-                // Also save a backup with descriptive key (optional)
                 localStorage.setItem('pfdss_input_data', JSON.stringify(formData));
 
                 showStatus('Data saved! Redirecting...', true);
-                
-                // Small delay for UX, then redirect
-                setTimeout(() => {
-                    window.location.href = 'recommendation.html';
-                }, 800);
+                setTimeout(() => window.location.href = 'recommendation.html', 800);
 
             } catch (err) {
-                console.error('❌ Submit error:', err);
+                console.error('❌ Error:', err);
                 showStatus(`Error: ${err.message}`, false);
                 btn.disabled = false;
                 btn.textContent = '➡️ Proceed to Recommendation';
             }
         }
 
-        // Auto-load saved data when returning to this page
+        // ==========================================
+        // 🚀 INITIALIZATION
+        // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
             console.log('🔄 Data Acquisition: Loading...');
             
-            // Try primary key first, then fallback
+            // ✅ Update header with user email if logged in
+            updateAuthUI();
+            
+            // Load saved form data
             const saved = localStorage.getItem(STORAGE_KEYS.formData) || 
                          localStorage.getItem('pfdss_input_data');
-            
             if (saved) {
                 try {
                     const data = JSON.parse(saved);
-                    console.log('📦 Loaded saved data:', Object.keys(data));
-                    
-                    // Populate form fields
+                    console.log('📦 Loaded saved data');
                     for (const [key, value] of Object.entries(data)) {
                         const el = document.getElementById(key);
-                        if (el && value !== undefined && value !== null) {
-                            el.value = value;
-                        }
+                        if (el && value != null) el.value = value;
                     }
-                    showStatus('Previous data loaded', true);
                 } catch (e) {
-                    console.warn('⚠️ Could not parse saved data:', e);
+                    console.warn('⚠️ Parse error:', e);
                 }
             }
         });
 
         // Allow Enter key to submit
-        document.getElementById('dataForm').addEventListener('keypress', (e) => {
+        document.getElementById('dataForm')?.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 submitData();

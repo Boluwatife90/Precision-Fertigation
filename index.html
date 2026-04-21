@@ -5,12 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Precision Fertigation Decision Support System (PFDSS)</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a5c3a 0%, #0d3b25 100%);
@@ -43,9 +38,48 @@
             font-weight: 700;
         }
 
-        .logo-icon img {
-            width: 50px;
-            height: auto;
+        .logo-icon img { width: 50px; height: auto; }
+
+        /* ✅ Auth UI Styles */
+        .auth-info { display: flex; align-items: center; gap: 12px; }
+        .user-email { 
+            font-size: 0.9rem; 
+            color: #c8e6c9; 
+            font-weight: 500;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .btn-logout { 
+            background: rgba(255,255,255,0.2); 
+            color: white; 
+            border: 1px solid rgba(255,255,255,0.4); 
+            padding: 6px 14px; 
+            border-radius: 6px; 
+            font-size: 0.85rem; 
+            cursor: pointer; 
+            transition: 0.2s;
+        }
+        .btn-logout:hover { background: rgba(255,255,255,0.3); }
+        .btn-get-started {
+            background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+            color: white;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-get-started:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
         }
 
         /* Language Selector */
@@ -54,12 +88,7 @@
             align-items: center;
             gap: 10px;
         }
-
-        .lang-selector label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
+        .lang-selector label { font-size: 0.9rem; opacity: 0.9; }
         .lang-selector select {
             padding: 8px 16px;
             border: 1px solid rgba(255, 255, 255, 0.3);
@@ -71,18 +100,13 @@
             backdrop-filter: blur(5px);
             transition: all 0.3s ease;
         }
-
         .lang-selector select:hover,
         .lang-selector select:focus {
             background: rgba(255, 255, 255, 0.25);
             border-color: rgba(255, 255, 255, 0.6);
             outline: none;
         }
-
-        .lang-selector select option {
-            background: #1a5c3a;
-            color: white;
-        }
+        .lang-selector select option { background: #1a5c3a; color: white; }
 
         /* Hero Section */
         .hero {
@@ -96,36 +120,22 @@
             position: relative;
             overflow: hidden;
         }
-
         .hero::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.05" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
             background-size: cover;
             opacity: 0.3;
         }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-            max-width: 900px;
-        }
-
+        .hero-content { position: relative; z-index: 1; max-width: 900px; }
         .hero h1 {
             font-size: 3.5rem;
             margin-bottom: 20px;
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
             line-height: 1.2;
         }
-
-        .hero h1 span {
-            color: #a5d6a7;
-        }
-
+        .hero h1 span { color: #a5d6a7; }
         .hero p {
             font-size: 1.3rem;
             margin-bottom: 40px;
@@ -141,7 +151,6 @@
             flex-wrap: wrap;
             margin-top: 30px;
         }
-
         .btn {
             padding: 16px 48px;
             font-size: 1.1rem;
@@ -154,25 +163,21 @@
             display: inline-block;
             min-width: 180px;
         }
-
         .btn-primary {
             background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
             color: white;
             box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
         }
-
         .btn-primary:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(76, 175, 80, 0.6);
         }
-
         .btn-secondary {
             background: rgba(255, 255, 255, 0.2);
             color: white;
             border: 2px solid rgba(255, 255, 255, 0.5);
             backdrop-filter: blur(10px);
         }
-
         .btn-secondary:hover {
             background: rgba(255, 255, 255, 0.3);
             transform: translateY(-3px);
@@ -190,7 +195,6 @@
             margin: 0 auto;
             width: 100%;
         }
-
         .feature-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -201,27 +205,13 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             transition: transform 0.3s ease;
         }
-
         .feature-card:hover {
             transform: translateY(-5px);
             background: rgba(255, 255, 255, 0.15);
         }
-
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-        }
-
-        .feature-card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-        }
-
-        .feature-card p {
-            font-size: 0.95rem;
-            opacity: 0.9;
-            line-height: 1.5;
-        }
+        .feature-icon { font-size: 3rem; margin-bottom: 15px; }
+        .feature-card h3 { font-size: 1.3rem; margin-bottom: 10px; }
+        .feature-card p { font-size: 0.95rem; opacity: 0.9; line-height: 1.5; }
 
         /* Pricing Section */
         .pricing-section {
@@ -229,13 +219,11 @@
             background: rgba(255, 255, 255, 0.03);
             text-align: center;
         }
-
         .pricing-section h2 {
             font-size: 2rem;
             margin-bottom: 30px;
             color: #a5d6a7;
         }
-
         .price-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -243,7 +231,6 @@
             max-width: 900px;
             margin: 0 auto;
         }
-
         .price-item {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -252,25 +239,21 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             transition: transform 0.3s ease;
         }
-
         .price-item:hover {
             transform: translateY(-3px);
             background: rgba(255, 255, 255, 0.15);
         }
-
         .price-item strong {
             display: block;
             font-size: 1rem;
             margin-bottom: 10px;
             color: white;
         }
-
         .price-val {
             font-size: 1.5rem;
             font-weight: 700;
             color: #81c784;
         }
-
         .price-note {
             margin-top: 20px;
             font-size: 0.85rem;
@@ -295,56 +278,28 @@
                 gap: 15px;
                 padding: 15px 20px;
             }
-
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-
-            .hero p {
-                font-size: 1.1rem;
-            }
-
+            .hero h1 { font-size: 2.2rem; }
+            .hero p { font-size: 1.1rem; }
             .auth-buttons {
                 flex-direction: column;
                 align-items: center;
             }
-
-            .btn {
-                width: 100%;
-                max-width: 280px;
-            }
-
-            .logo {
-                font-size: 1.2rem;
-            }
-
-            .pricing-section {
-                padding: 40px 20px;
-            }
-
-            .price-grid {
-                grid-template-columns: 1fr;
-            }
+            .btn { width: 100%; max-width: 280px; }
+            .logo { font-size: 1.2rem; }
+            .pricing-section { padding: 40px 20px; }
+            .price-grid { grid-template-columns: 1fr; }
+            .auth-info { flex-direction: column; gap: 8px; }
+            .user-email { max-width: 100%; }
         }
 
         /* Animation */
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .hero-content > *,
-        .feature-card,
-        .price-item {
+        .hero-content > *, .feature-card, .price-item {
             animation: fadeInUp 0.8s ease-out;
         }
-
         .hero-content h1 { animation-delay: 0.1s; }
         .hero-content p { animation-delay: 0.2s; }
         .auth-buttons { animation-delay: 0.3s; }
@@ -366,15 +321,20 @@
             <span data-i18n="appTitle">PFDSS</span>
         </div>
         
-        <!-- Language Selector -->
-        <div class="lang-selector">
-            <label for="langSelector" data-i18n="language">Language:</label>
-            <select id="langSelector">
-                <option value="en">English</option>
-                <option value="yo">Yorùbá</option>
-                <option value="ha">Hausa</option>
-                <option value="ig">Igbo</option>
-            </select>
+        <!-- ✅ DYNAMIC AUTH + LANGUAGE SECTION -->
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div id="authSection">
+                <!-- Content injected by JavaScript -->
+            </div>
+            <div class="lang-selector">
+                <label for="langSelector" data-i18n="language">Language:</label>
+                <select id="langSelector">
+                    <option value="en">English</option>
+                    <option value="yo">Yorùbá</option>
+                    <option value="ha">Hausa</option>
+                    <option value="ig">Igbo</option>
+                </select>
+            </div>
         </div>
     </header>
 
@@ -384,9 +344,9 @@
             <h1 data-i18n="heroTitle">Precision <span>Fertigation</span> Decision Support System</h1>
             <p data-i18n="heroSubtitle">Optimize crop nutrition with AI‑driven insights. Get data‑based recommendations for water and fertilizer so you can boost yields, cut waste, and reduce environmental harm.</p>
             
-            <div class="auth-buttons">
-                <a href="register.html" class="btn btn-primary" data-i18n="registerBtn">Register</a>
-                <a href="login.html" class="btn btn-secondary" data-i18n="loginBtn">Login</a>
+            <!-- ✅ Dynamic Auth Buttons -->
+            <div class="auth-buttons" id="authButtons">
+                <!-- Content injected by JavaScript -->
             </div>
         </div>
     </section>
@@ -428,7 +388,69 @@
     </footer>
 
     <script>
-        // Internationalization (i18n) Data
+        // ==========================================
+        // 🔐 AUTH UTILITIES (Shared across all pages)
+        // ==========================================
+        function getUser() {
+            try {
+                const userStr = localStorage.getItem('pfdss_user');
+                return userStr ? JSON.parse(userStr) : null;
+            } catch { return null; }
+        }
+
+        function isLoggedIn() {
+            return !!localStorage.getItem('pfdss_token') && !!getUser();
+        }
+
+        function logout() {
+            localStorage.removeItem('pfdss_token');
+            localStorage.removeItem('pfdss_user');
+            window.location.reload(); // Reload to update UI
+        }
+
+        function updateAuthUI() {
+            const authSection = document.getElementById('authSection');
+            const authButtons = document.getElementById('authButtons');
+            if (!authSection || !authButtons) return;
+
+            const lang = localStorage.getItem('pfdssLang') || 'en';
+            const t = i18n[lang];
+
+            if (isLoggedIn()) {
+                const user = getUser();
+                const email = user?.email || 'user@example.com';
+                
+                // Header auth section: show email + logout
+                authSection.innerHTML = `
+                    <div class="auth-info">
+                        <span class="user-email" title="${email}">👤 ${email}</span>
+                        <button class="btn-logout" onclick="logout()" title="Logout">🚪</button>
+                    </div>
+                `;
+                
+                // Hero buttons: show "Get Started" only
+                authButtons.innerHTML = `
+                    <a href="data-acquisition.html" class="btn-get-started">
+                        🚀 <span data-i18n="getStartedBtn">Get Started</span>
+                    </a>
+                `;
+                // Update translation for Get Started if available
+                if (t.getStartedBtn) {
+                    authButtons.querySelector('[data-i18n="getStartedBtn"]').textContent = t.getStartedBtn;
+                }
+            } else {
+                // Not logged in: show Register + Login
+                authSection.innerHTML = ''; // Clear header auth
+                authButtons.innerHTML = `
+                    <a href="register.html" class="btn btn-primary" data-i18n="registerBtn">${t.registerBtn}</a>
+                    <a href="login.html" class="btn btn-secondary" data-i18n="loginBtn">${t.loginBtn}</a>
+                `;
+            }
+        }
+
+        // ==========================================
+        // 🌍 INTERNATIONALIZATION (i18n)
+        // ==========================================
         const i18n = {
             en: {
                 appTitle: "PFDSS",
@@ -437,6 +459,7 @@
                 heroSubtitle: "Optimize crop nutrition with AI‑driven insights. Get data‑based recommendations for water and fertilizer so you can boost yields, cut waste, and reduce environmental harm.",
                 registerBtn: "Register",
                 loginBtn: "Login",
+                getStartedBtn: "Get Started",
                 featureAI: "AI-Powered Analysis",
                 featureAIDesc: "Advanced machine learning algorithms analyze soil, weather, and crop data for precise recommendations.",
                 featureIrrigation: "Smart Irrigation",
@@ -462,6 +485,7 @@
                 heroSubtitle: "Ṣe àtúnṣe ìmúra ohun ọ̀gbìn pẹ̀lú ìmọ̀-ẹ̀rọ AI. Gba àwọn ìtọ́nisọ́nà tí ó dá lórí data fún omi àti oògùn ilẹ̀ láti lè mú iṣẹ́-ọ̀gbìn rẹ̀ dára, dínkù ìfọwọ́sowọ́pọ̀, àti dínkù ipa lórí ayé.",
                 registerBtn: "Forúkọsílẹ̀",
                 loginBtn: "Wọlé",
+                getStartedBtn: "Bẹ̀rẹ̀",
                 featureAI: "Ìṣirò AI",
                 featureAIDesc: "Àwọn algorithm machine learning tó lagbaye ń ṣe àtúnyẹ̀wò data ilẹ̀, ojú-ọjọ́, àti ohun ọ̀gbìn fún àwọn ìtọ́nisọ́nà tó ṣe déédé.",
                 featureIrrigation: "Ìfún Omi Ọlọ́gbọ́n",
@@ -487,6 +511,7 @@
                 heroSubtitle: "Haɓaka abinci da shuke-shuke tare da hangen nesa na AI. Samu shawarwari masu dogaro da bayanai don ruwa da takin ƙasa don haɓaka amfanin gona, rage ɓarna, da rage lahani ga muhalli.",
                 registerBtn: "Yi Rajista",
                 loginBtn: "Shiga",
+                getStartedBtn: "Fara",
                 featureAI: "Bincike na AI",
                 featureAIDesc: "Algoritm na machine learning masu ƙarfi suna bincika bayanai na ƙasa, yanayi, da amfanin gona don shawarwari masu daidaito.",
                 featureIrrigation: "Ban Ruwa Mai Hikima",
@@ -512,6 +537,7 @@
                 heroSubtitle: "Mezigharị nri ihe ọkụkụ site na nghọta AI. Nweta ndụmọdụ dabere na data maka mmiri na fatịlaịza ka i nwee ike ịbawanye mkpụrụ, belata iji efu, ma belata mmerụ gburugburu ebe obibi.",
                 registerBtn: "Deba Aha",
                 loginBtn: "Banye",
+                getStartedBtn: "Malite",
                 featureAI: "Nyocha AI",
                 featureAIDesc: "Algorithms machine learning dị elu na-enyocha ala, ihu igwe, na data ihe ọkụkụ maka ndụmọdụ ziri ezi.",
                 featureIrrigation: "Ịgba Mmiri Mara",
@@ -534,11 +560,7 @@
 
         // Fertilizer Prices Data (₦/kg)
         const fertilizerPrices = {
-            urea: 950,
-            dap: 1120,
-            mop: 870,
-            npk: 930,
-            currency: "₦"
+            urea: 950, dap: 1120, mop: 870, npk: 930, currency: "₦"
         };
 
         // DOM Elements
@@ -569,16 +591,12 @@
 
         // Update language throughout the page
         function updateLanguage(lang) {
-            // Save preference to localStorage
             localStorage.setItem('pfdssLang', lang);
-            
             const t = i18n[lang];
             
-            // Update all elements with data-i18n attribute
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (t[key]) {
-                    // Handle HTML content for hero title (with span)
                     if (key === 'heroTitle') {
                         el.innerHTML = t[key];
                     } else {
@@ -587,11 +605,11 @@
                 }
             });
             
-            // Re-render prices with current language
             renderPrices(t);
-            
-            // Update HTML lang attribute for accessibility
             document.documentElement.lang = lang;
+            
+            // Re-update auth UI with new language
+            updateAuthUI();
         }
 
         // Fetch live prices from API (fallback to static if unavailable)
@@ -600,22 +618,15 @@
                 const response = await fetch('/api/fertilizer-prices');
                 if (!response.ok) throw new Error('Network error');
                 const data = await response.json();
-                
-                // Safely merge live data
                 Object.keys(data).forEach(key => {
                     if (fertilizerPrices.hasOwnProperty(key)) {
                         fertilizerPrices[key] = data[key];
                     }
                 });
-                
-                // Ensure currency is set
-                if (!fertilizerPrices.currency) {
-                    fertilizerPrices.currency = "₦";
-                }
+                if (!fertilizerPrices.currency) fertilizerPrices.currency = "₦";
             } catch (error) {
                 console.warn("Using fallback prices:", error.message);
             }
-            // Re-render with current language
             renderPrices(i18n[langSelector.value]);
         }
 
@@ -639,6 +650,9 @@
             
             // Refresh prices every 24 hours
             setInterval(fetchLivePrices, 24 * 60 * 60 * 1000);
+            
+            // ✅ Initialize auth UI
+            updateAuthUI();
         });
     </script>
 </body>

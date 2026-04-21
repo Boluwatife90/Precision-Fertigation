@@ -5,13 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Take Action - PFDSS</title>
     <style>
-        /* Same clean styles */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f9fbf9; color: #333; min-height: 100vh; }
         .main-header { display: flex; justify-content: space-between; align-items: center; padding: 18px 40px; background: linear-gradient(135deg, #0d3b25 0%, #1a5c3a 100%); box-shadow: 0 4px 12px rgba(0,0,0,0.15); color: white; }
         .logo { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.6rem; }
-        .logo-icon { font-size: 2.2rem; color: #a5d6a7; }
-        .nav-links a { color: #e8f5e9; text-decoration: none; margin-left: 20px; font-weight: 500; padding: 8px 16px; border-radius: 6px; background: rgba(255,255,255,0.15); }
+        .logo img { width: 50px; height: auto; }
+        .nav-links { display: flex; align-items: center; gap: 15px; }
+        .nav-links a { color: #e8f5e9; text-decoration: none; font-weight: 500; padding: 8px 16px; border-radius: 6px; background: rgba(255,255,255,0.15); transition: 0.2s; }
+        .nav-links a:hover { background: rgba(255,255,255,0.25); }
+        
+        /* ✅ Auth UI Styles */
+        .auth-info { display: flex; align-items: center; gap: 12px; }
+        .user-email { 
+            font-size: 0.9rem; 
+            color: #c8e6c9; 
+            font-weight: 500;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .btn-logout { 
+            background: rgba(255,255,255,0.2); 
+            color: white; 
+            border: 1px solid rgba(255,255,255,0.4); 
+            padding: 6px 14px; 
+            border-radius: 6px; 
+            font-size: 0.85rem; 
+            cursor: pointer; 
+            transition: 0.2s;
+        }
+        .btn-logout:hover { background: rgba(255,255,255,0.3); }
+        
         .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
         .card { background: white; border-radius: 10px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
         .action-buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin: 30px 0; }
@@ -25,16 +50,36 @@
         .action-btn.consult { background: #2196f3; }
         .action-btn .icon { font-size: 2rem; }
         .page-nav { display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-        .page-nav a { padding: 10px 20px; background: #e8f5e9; color: #2e7d32; text-decoration: none; border-radius: 6px; font-weight: 500; }
+        .page-nav a { padding: 10px 20px; background: #e8f5e9; color: #2e7d32; text-decoration: none; border-radius: 6px; font-weight: 500; transition: all 0.2s; }
         .page-nav a.active, .page-nav a:hover { background: #4caf50; color: white; }
         .message { padding: 15px; border-radius: 8px; margin: 20px 0; display: none; }
         .message.success { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+        
+        @media (max-width: 768px) {
+            .main-header { flex-direction: column; padding: 15px; text-align: center; }
+            .nav-links { margin-top: 10px; flex-wrap: wrap; justify-content: center; gap: 8px; }
+            .nav-links a { margin: 0; }
+            .auth-info { flex-direction: column; gap: 8px; }
+            .user-email { max-width: 100%; }
+            .action-buttons { flex-direction: column; align-items: center; }
+            .action-btn { width: 100%; max-width: 300px; }
+        }
     </style>
 </head>
 <body>
     <header class="main-header">
-        <div class="logo"><span class="logo-icon">🌱</span><span>PFDSS</span></div>
-        <div class="nav-links"><a href="index.html">Home</a><a href="login.html">Login</a></div>
+        <div class="logo">
+            <img src="./WhatsApp_Image_2026-04-09_at_12.30.40_PM__1_-removebg-preview.png" alt="PFDSS Logo">
+            <span>PFDSS</span>
+        </div>
+        
+        <!-- ✅ DYNAMIC AUTH SECTION -->
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <div id="authSection">
+                <!-- Content injected by JavaScript -->
+            </div>
+        </div>
     </header>
 
     <div class="container">
@@ -76,6 +121,47 @@
     </div>
 
     <script>
+        // ==========================================
+        // 🔐 AUTH UTILITIES (Shared across all pages)
+        // ==========================================
+        function getUser() {
+            try {
+                const userStr = localStorage.getItem('pfdss_user');
+                return userStr ? JSON.parse(userStr) : null;
+            } catch { return null; }
+        }
+
+        function isLoggedIn() {
+            return !!localStorage.getItem('pfdss_token') && !!getUser();
+        }
+
+        function logout() {
+            localStorage.removeItem('pfdss_token');
+            localStorage.removeItem('pfdss_user');
+            window.location.href = 'index.html';
+        }
+
+        function updateAuthUI() {
+            const authSection = document.getElementById('authSection');
+            if (!authSection) return;
+
+            if (isLoggedIn()) {
+                const user = getUser();
+                const email = user?.email || 'user@example.com';
+                authSection.innerHTML = `
+                    <div class="auth-info">
+                        <span class="user-email" title="${email}">👤 ${email}</span>
+                        <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+                    </div>
+                `;
+            } else {
+                authSection.innerHTML = `<a href="login.html">Login</a>`;
+            }
+        }
+
+        // ==========================================
+        // 🛠️ ACTION LOGGING
+        // ==========================================
         function logAction(action) {
             const msgDiv = document.getElementById('action-message');
             const messages = {
@@ -90,6 +176,7 @@
                 const history = JSON.parse(localStorage.getItem('pfdss_history') || '[]');
                 if (history.length > 0) {
                     history[0].action_taken = action;
+                    history[0].action_timestamp = new Date().toISOString();
                     localStorage.setItem('pfdss_history', JSON.stringify(history));
                 }
                 
@@ -98,14 +185,35 @@
                 msgDiv.className = `message ${msg.type}`;
                 msgDiv.style.display = 'block';
                 
-                // Optional: Send to backend
-                // fetch('https://precisionfertigation.onrender.com/log-action', {
+                // Auto-hide after 4 seconds
+                setTimeout(() => { msgDiv.style.display = 'none'; }, 4000);
+                
+                // Optional: Send to backend for analytics
+                // const token = localStorage.getItem('pfdss_token');
+                // fetch('https://precisionfertigation-3.onrender.com/log-action', {
                 //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify({ action, data: JSON.parse(localStorage.getItem('pfdss_input_data')) })
-                // });
+                //     headers: { 
+                //         'Content-Type': 'application/json',
+                //         ...(token && { 'Authorization': `Bearer ${token}` })
+                //     },
+                //     body: JSON.stringify({ 
+                //         action, 
+                //         data: JSON.parse(localStorage.getItem('formData') || '{}'),
+                //         timestamp: new Date().toISOString()
+                //     })
+                // }).catch(err => console.warn('⚠️ Could not log action to backend:', err));
             }
         }
+
+        // ==========================================
+        // 🚀 INITIALIZE ON LOAD
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🛠️ Actions page: Loading...');
+            
+            // ✅ Update header with user email if logged in
+            updateAuthUI();
+        });
     </script>
 </body>
 </html>

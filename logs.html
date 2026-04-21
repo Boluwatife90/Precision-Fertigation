@@ -10,9 +10,34 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f9fbf9; color: #333; min-height: 100vh; }
         .main-header { display: flex; justify-content: space-between; align-items: center; padding: 18px 40px; background: linear-gradient(135deg, #0d3b25 0%, #1a5c3a 100%); box-shadow: 0 4px 12px rgba(0,0,0,0.15); color: white; }
         .logo { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.6rem; }
-        .logo-icon { font-size: 2.2rem; color: #a5d6a7; }
-        .nav-links a { color: #e8f5e9; text-decoration: none; margin-left: 20px; font-weight: 500; padding: 8px 16px; border-radius: 6px; background: rgba(255,255,255,0.15); transition: 0.2s; }
+        .logo img { width: 50px; height: auto; }
+        .nav-links { display: flex; align-items: center; gap: 15px; }
+        .nav-links a { color: #e8f5e9; text-decoration: none; font-weight: 500; padding: 8px 16px; border-radius: 6px; background: rgba(255,255,255,0.15); transition: 0.2s; }
         .nav-links a:hover { background: rgba(255,255,255,0.25); }
+        
+        /* ✅ Auth UI Styles */
+        .auth-info { display: flex; align-items: center; gap: 12px; }
+        .user-email { 
+            font-size: 0.9rem; 
+            color: #c8e6c9; 
+            font-weight: 500;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .btn-logout { 
+            background: rgba(255,255,255,0.2); 
+            color: white; 
+            border: 1px solid rgba(255,255,255,0.4); 
+            padding: 6px 14px; 
+            border-radius: 6px; 
+            font-size: 0.85rem; 
+            cursor: pointer; 
+            transition: 0.2s;
+        }
+        .btn-logout:hover { background: rgba(255,255,255,0.3); }
+        
         .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
         .card { background: white; border-radius: 10px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .chart-container { height: 320px; position: relative; margin: 15px 0; }
@@ -32,10 +57,13 @@
         .btn-outline:hover { background: #e8f5e9; }
         .empty-state { text-align: center; padding: 40px; color: #666; }
         .empty-state p { margin: 10px 0; }
+        
         @media (max-width: 768px) {
             .main-header { flex-direction: column; padding: 15px; text-align: center; }
-            .nav-links { margin-top: 10px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+            .nav-links { margin-top: 10px; flex-wrap: wrap; justify-content: center; gap: 8px; }
             .nav-links a { margin: 0; }
+            .auth-info { flex-direction: column; gap: 8px; }
+            .user-email { max-width: 100%; }
             .log-table { font-size: 12px; }
             .log-table th, .log-table td { padding: 8px 6px; }
         }
@@ -43,9 +71,18 @@
 </head>
 <body>
     <header class="main-header">
-         <div class="logo"><img style="width: 50px;" src="./WhatsApp_Image_2026-04-09_at_12.30.40_PM__1_-removebg-preview.png" alt="" srcset=""><span>PFDSS</span></div>
-      
-        <div class="nav-links"><a href="index.html">Home</a><a href="login.html">Login</a></div>
+        <div class="logo">
+            <img src="./WhatsApp_Image_2026-04-09_at_12.30.40_PM__1_-removebg-preview.png" alt="PFDSS Logo">
+            <span>PFDSS</span>
+        </div>
+        
+        <!-- ✅ DYNAMIC AUTH SECTION -->
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <div id="authSection">
+                <!-- Content injected by JavaScript -->
+            </div>
+        </div>
     </header>
 
     <div class="container">
@@ -95,6 +132,44 @@
 
     <script>
         // ==========================================
+        // 🔐 AUTH UTILITIES (Shared across all pages)
+        // ==========================================
+        function getUser() {
+            try {
+                const userStr = localStorage.getItem('pfdss_user');
+                return userStr ? JSON.parse(userStr) : null;
+            } catch { return null; }
+        }
+
+        function isLoggedIn() {
+            return !!localStorage.getItem('pfdss_token') && !!getUser();
+        }
+
+        function logout() {
+            localStorage.removeItem('pfdss_token');
+            localStorage.removeItem('pfdss_user');
+            window.location.href = 'index.html';
+        }
+
+        function updateAuthUI() {
+            const authSection = document.getElementById('authSection');
+            if (!authSection) return;
+
+            if (isLoggedIn()) {
+                const user = getUser();
+                const email = user?.email || 'user@example.com';
+                authSection.innerHTML = `
+                    <div class="auth-info">
+                        <span class="user-email" title="${email}">👤 ${email}</span>
+                        <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+                    </div>
+                `;
+            } else {
+                authSection.innerHTML = `<a href="login.html">Login</a>`;
+            }
+        }
+
+        // ==========================================
         // 📦 LOAD HISTORY FROM localStorage
         // ==========================================
         function getHistory() {
@@ -129,7 +204,8 @@
         let trendChart = null;
 
         function initChart(history) {
-            const ctx = document.getElementById('trendChart').getContext('2d');
+            const ctx = document.getElementById('trendChart')?.getContext('2d');
+            if (!ctx) return;
             
             // Prepare data arrays (reverse for chronological order)
             const reversed = [...history].reverse();
@@ -218,7 +294,7 @@
                         },
                         y2: {
                             type: 'linear',
-                            display: false, // Hidden but used for rate data
+                            display: false,
                             min: 0
                         }
                     },
@@ -256,6 +332,8 @@
         function populateTable(history) {
             const tbody = document.getElementById('logTableBody');
             const container = document.getElementById('tableContainer');
+            
+            if (!tbody || !container) return;
             
             if (history.length === 0) {
                 container.innerHTML = `
@@ -310,7 +388,11 @@
         // 🚀 INITIALIZE ON LOAD
         // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('📊 Logs page: Loading history...');
+            console.log('📊 Logs page: Loading...');
+            
+            // ✅ Update header with user email if logged in
+            updateAuthUI();
+            
             const history = getHistory();
             console.log(`📦 Found ${history.length} logged predictions`);
             

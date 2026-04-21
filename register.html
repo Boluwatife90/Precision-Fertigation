@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - Precision Fertigation DSS</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; 
+      background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); 
+      min-height: 100vh; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      padding: 20px; 
+    }
+    .auth-card { 
+      background: white; 
+      padding: 2rem; 
+      border-radius: 12px; 
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12); 
+      width: 100%; 
+      max-width: 420px; 
+    }
+    .auth-card h2 { 
+      color: #2e7d32; 
+      margin-bottom: 0.5rem; 
+      text-align: center; 
+      font-size: 1.5rem;
+    }
+    .auth-card p.subtitle {
+      text-align: center;
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { 
+      display: block; 
+      margin-bottom: 0.4rem; 
+      font-size: 0.9rem; 
+      font-weight: 500;
+      color: #333;
+    }
+    .form-group input, .form-group select { 
+      width: 100%; 
+      padding: 0.8rem; 
+      border: 1px solid #ddd; 
+      border-radius: 8px; 
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: #2e7d32;
+      box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
+    }
+    .password-wrapper { position: relative; }
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #666;
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 4px;
+    }
+    .toggle-password:hover { color: #2e7d32; }
+    .password-hint {
+      font-size: 0.75rem;
+      color: #666;
+      margin-top: 4px;
+    }
+    .btn { 
+      width: 100%; 
+      padding: 0.9rem; 
+      background: #2e7d32; 
+      color: white; 
+      border: none; 
+      border-radius: 8px; 
+      font-size: 1rem; 
+      font-weight: 600; 
+      cursor: pointer; 
+      margin-top: 0.5rem; 
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #1b5e20; }
+    .btn:disabled { background: #aaa; cursor: not-allowed; }
+    .status-msg { 
+      margin-top: 1rem; 
+      padding: 0.6rem; 
+      border-radius: 6px; 
+      text-align: center; 
+      font-size: 0.85rem; 
+      display: none; 
+    }
+    .success { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; } 
+    .error { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+    .footer { 
+      text-align: center; 
+      margin-top: 1.5rem; 
+      font-size: 0.85rem; 
+      color: #666; 
+    }
+    .footer a { color: #2e7d32; text-decoration: none; font-weight: 500; }
+    .footer a:hover { text-decoration: underline; }
+    .nav-links { 
+      display: flex; 
+      justify-content: space-between; 
+      margin-bottom: 1rem; 
+      font-size: 0.9rem; 
+    }
+    .nav-links a { text-decoration: none; color: #2e7d32; }
+    .nav-links a:hover { text-decoration: underline; }
+    
+    @media (max-width: 480px) {
+      .auth-card { padding: 1.5rem; }
+      .nav-links { flex-direction: column; gap: 8px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-card">
+    <div class="nav-links">
+      <a href="index.html">🌱 Home</a>
+      <a href="login.html">Sign In</a>
+    </div>
+    
+    <h2>📝 Create Account</h2>
+    <p class="subtitle">Join the Precision Fertigation Decision Support System</p>
+    
+    <form id="registerForm" novalidate>
+      <div class="form-group">
+        <label for="name">Full Name *</label>
+        <input type="text" id="name" name="name" required placeholder="e.g., Chinedu Okafor" minlength="2">
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email Address *</label>
+        <input type="email" id="email" name="email" required placeholder="you@example.com">
+      </div>
+      
+      <!-- ✅ PASSWORD FIELD (FIXED & INCLUDED) -->
+      <div class="form-group">
+        <label for="password">Password *</label>
+        <div class="password-wrapper">
+          <input type="password" id="password" name="password" required placeholder="Min. 6 characters" minlength="6">
+          <button type="button" class="toggle-password" onclick="togglePassword()">👁️</button>
+        </div>
+        <div class="password-hint">Use at least 6 characters. Mix letters, numbers & symbols for security.</div>
+      </div>
+      
+      <!-- Optional: Nigerian-specific fields -->
+      <div class="form-group">
+        <label for="state">State / Region (Optional)</label>
+        <select id="state" name="state">
+          <option value="">Select your state</option>
+          <option value="lagos">Lagos</option>
+          <option value="kano">Kano</option>
+          <option value="rivers">Rivers</option>
+          <option value="kaduna">Kaduna</option>
+          <option value="oyo">Oyo</option>
+          <option value="enugu">Enugu</option>
+          <option value="others">Others</option>
+        </select>
+      </div>
+      
+      <button type="submit" class="btn" id="registerBtn">Create Account</button>
+    </form>
+    
+    <div id="statusMsg" class="status-msg"></div>
+    
+    <div class="footer">
+      Already have an account? <a href="login.html">Sign in here</a>
+    </div>
+  </div>
+
+  <script>
+    // ================= CONFIG =================
+    const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+      ? 'http://127.0.0.1:5000' 
+      : 'https://precisionfertigation-3.onrender.com';
+    
+    const REGISTER_URL = `${API_BASE}/api/auth/register`;
+    // ==========================================
+
+    // Toggle password visibility
+    function togglePassword() {
+      const input = document.getElementById('password');
+      const btn = document.querySelector('.toggle-password');
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        btn.textContent = '👁️';
+      }
+    }
+
+    // Show status message
+    function showStatus(message, isSuccess) {
+      const msgEl = document.getElementById('statusMsg');
+      msgEl.textContent = message;
+      msgEl.className = `status-msg ${isSuccess ? 'success' : 'error'}`;
+      msgEl.style.display = 'block';
+      // Auto-hide success messages after 3 seconds
+      if (isSuccess) setTimeout(() => { msgEl.style.display = 'none'; }, 3000);
+    }
+
+    // Set button loading state
+    function setLoading(isLoading) {
+      const btn = document.getElementById('registerBtn');
+      btn.disabled = isLoading;
+      btn.textContent = isLoading ? 'Creating account...' : 'Create Account';
+    }
+
+    // Form submission handler
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      // Get values
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim().toLowerCase();
+      const password = document.getElementById('password').value;
+      const state = document.getElementById('state').value;
+
+      // Client-side validation
+      if (!name || name.length < 2) {
+        showStatus('❌ Please enter your full name (min. 2 characters)', false);
+        return;
+      }
+      if (!email || !email.includes('@')) {
+        showStatus('❌ Please enter a valid email address', false);
+        return;
+      }
+      if (!password || password.length < 6) {
+        showStatus('❌ Password must be at least 6 characters', false);
+        return;
+      }
+
+      // Show loading state
+      setLoading(true);
+      showStatus('', false); // Hide any previous messages
+
+      try {
+        const response = await fetch(REGISTER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password, state })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          // Handle specific error messages from backend
+          if (result.error?.includes('already registered')) {
+            throw new Error('This email is already registered. Try logging in instead.');
+          }
+          throw new Error(result.error || 'Registration failed. Please try again.');
+        }
+
+        // ✅ Success: Save auth tokens
+        localStorage.setItem('pfdss_token', result.access_token);
+        localStorage.setItem('pfdss_user', JSON.stringify(result.user));
+        
+        showStatus('✅ Account created successfully! Redirecting...', true);
+        
+        // Redirect to data acquisition page after short delay
+        setTimeout(() => {
+          window.location.href = 'data-acquisition.html';
+        }, 1200);
+
+      } catch (err) {
+        console.error('Registration error:', err);
+        showStatus(`❌ ${err.message}`, false);
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    // Auto-fill email from login page if passed via URL (?email=...)
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const prefillEmail = urlParams.get('email');
+      if (prefillEmail) {
+        document.getElementById('email').value = prefillEmail;
+        document.getElementById('name').focus();
+      }
+    });
+  </script>
+</body>
+</html>
